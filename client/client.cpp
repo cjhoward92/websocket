@@ -29,14 +29,12 @@ std::shared_ptr<w_client> w_client::parse_uri(const std::string &uri) {
 
     int port = is_secure ? 443 : 80;
     int start_port = -1;
-    bool parsed_host = false;
     std::string host;
     for (int i = idx; i < uri.size(); i++) {
         auto c = uri[i];
         if (c == ':' || (c == '/' && start_port == -1)) {
             host = uri.substr(idx, i - idx);
             start_port = c == ':' ? i + 1 : -1;
-            parsed_host = true;
             continue;
         } else if (c == '/' && start_port > 0) {
             port = std::stoi(uri.substr(start_port, i - idx));
@@ -44,7 +42,7 @@ std::shared_ptr<w_client> w_client::parse_uri(const std::string &uri) {
         }
     }
 
-    if (!parsed_host) {
+    if (host.length() == 0) {
         host = uri.substr(idx, uri.length() - idx);
     }
 
