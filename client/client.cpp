@@ -50,7 +50,7 @@ std::shared_ptr<w_client> w_client::parse_uri(const std::string &uri) {
         port = std::stoi(uri.substr(start_port, uri.length() - start_port));
     }
 
-    std::shared_ptr<w_client> shared(new w_client(host, port, is_secure));
+    std::shared_ptr<w_client> shared(new w_client(uri, host, port, is_secure));
     return shared;
 }
 
@@ -60,6 +60,10 @@ bool w_client::get_secure() const {
 
 const std::string& w_client::get_host() const {
     return this->_host;
+}
+
+const std::string& w_client::get_uri() const {
+    return this->_uri;
 }
 
 uint16_t w_client::get_port() const {

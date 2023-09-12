@@ -22,5 +22,8 @@ add_executable(websocket main.cpp
 # These tests can use the Catch2-provided main
 add_executable(tests client/client_tests.cpp
         client/client.cpp
-        client/client.h)
+        client/client.h
+        utilities/base64.cpp
+        utilities/base64.h
+        utilities/base64_tests.cpp)
 target_link_libraries(tests PRIVATE Catch2::Catch2WithMain)

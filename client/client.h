@@ -21,15 +21,18 @@ public:
     }
     ~w_client() = default;
 
+    [[nodiscard]] const std::string& get_uri() const;
     [[nodiscard]] const std::string& get_host() const;
     [[nodiscard]] uint16_t get_port() const;
     [[nodiscard]] bool get_secure() const;
 
 private:
-    explicit w_client(std::string host, uint16_t port, bool secure):
+    explicit w_client(std::string uri, std::string host, uint16_t port, bool secure):
+        _uri(std::move(uri)),
         _host(std::move(host)),
         _port(port),
         _secure(secure) {};
+    std::string _uri;
     std::string _host;
     uint16_t _port {};
     bool _secure {};
