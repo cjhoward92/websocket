@@ -6,6 +6,8 @@
 #include <sys/socket.h>
 #include <netdb.h>
 #include <unistd.h>
+#include <netinet/tcp.h>
+#include <fcntl.h>
 
 #include "client/client.h"
 #include "utilities/base64.h"
@@ -48,8 +50,8 @@ int main() {
     msg_stream << "Host: localhost:18080\r\n";
     msg_stream << "Upgrade: websocket\r\n";
     msg_stream << "Connection: Upgrade\r\n";
-    msg_stream << "Sec-WebSocket-Key: dGhpcyBpcyBteSBrZXk=\r\n";
-    msg_stream << "Sec-WebSocket-Version: 13";
+    msg_stream << "Sec-WebSocket-Key: x3JJHMbDL1EzLkh9GBhXDw==\r\n";
+    msg_stream << "Sec-WebSocket-Version: 13\r\n\r\n";
     auto msg = msg_stream.str();
 
     if (send(sockfd, msg.c_str(), msg.length(), 0) < 0) {
@@ -60,12 +62,25 @@ int main() {
     }
 
     char buf[1024];
-    if (recv(sockfd, buf, 1024, 0) < 0) {
+    size_t len;
+    len = recv(sockfd, buf, 1024, 0);
+    if (len < 0) {
         close(sockfd);
         freeaddrinfo(servinfo);
         std::cerr << "recv error: " << strerror(errno) << std::endl;
         exit(1);
     }
+
+    std::string res(buf, len);
+    // TODO: validate websocket return headers
+    // then start doing the work of building a real client.
+    std::cout << res << std::endl;
+
+    // Optimize by removing Nagle's Algo and setting IO to non-blocking.
+    // Do this _after_ connecting
+//    int flag = 1;
+//    setsockopt(sockfd, IPPROTO_TCP, TCP_NODELAY, (char*)&flag, sizeof(flag));
+//    fcntl(sockfd, F_SETFL, O_NONBLOCK);
 
     close(sockfd);
     freeaddrinfo(servinfo);
